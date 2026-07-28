@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://gracefireministry.onrender.com/sitemap.xml
