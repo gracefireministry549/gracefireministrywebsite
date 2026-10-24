@@ -295,3 +295,55 @@ p{ margin:0 0 1em; }
   color:#fff; border-radius:var(--radius); padding:40px; display:flex; flex-wrap:wrap; gap:26px; align-items:center; justify-content:space-between;
 }
 .event-banner h3{ color:#fff; }
+
+
+/* -------- Anniversary thanksgiving: celebratory, calm and mobile-first -------- */
+.anniversary-thanks{
+  position:relative; isolation:isolate; overflow:hidden; padding:clamp(64px,8vw,112px) 0;
+  color:rgba(255,255,255,.84);
+  background:radial-gradient(ellipse at 12% 15%,rgba(46,143,217,.2),transparent 38%),
+    radial-gradient(ellipse at 88% 85%,rgba(232,184,75,.15),transparent 36%),
+    linear-gradient(135deg,#070E24 0%,#0B1A3A 58%,#10254b 100%);
+}
+.thanks-layout{ position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr); gap:clamp(28px,6vw,76px); align-items:center; }
+.thanks-copy .eyebrow,.thanks-scripture .eyebrow{ color:var(--gold-300); }
+.thanks-kicker{ color:var(--gold-300); font-weight:800; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; }
+.thanks-copy h2{ color:#fff; font-size:clamp(2.35rem,5vw,4.5rem); max-width:760px; margin:.08em 0 .28em; text-wrap:balance; }
+.thanks-lead{ color:#fff; font-size:clamp(1.05rem,1.6vw,1.2rem); max-width:720px; }
+.thanks-actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.thanks-scripture{
+  position:relative; padding:clamp(28px,4vw,42px); border:1px solid rgba(244,206,122,.3);
+  border-radius:24px; background:rgba(255,255,255,.055); box-shadow:0 24px 70px rgba(0,0,0,.2);
+  backdrop-filter:blur(10px);
+}
+.scripture-mark{ display:block; color:var(--gold-300); font-size:2.1rem; margin-bottom:12px; }
+.thanks-scripture blockquote{ margin:12px 0 16px; color:#fff; font:600 clamp(1.25rem,2.2vw,1.7rem)/1.45 var(--font-display); }
+.thanks-scripture cite{ color:var(--gold-300); font-style:normal; font-weight:800; font-size:.86rem; }
+.thanks-divider{ height:1px; margin:26px 0 20px; background:linear-gradient(90deg,var(--gold-400),transparent); }
+.thanks-scripture strong,.thanks-scripture>span:last-child{ display:block; }
+.thanks-scripture strong{ color:#fff; font-family:var(--font-display); font-size:1.15rem; }
+.thanks-scripture>span:last-child{ color:rgba(255,255,255,.7); font-size:.92rem; margin-top:5px; }
+.thanks-glow{ position:absolute; z-index:-1; width:280px; height:280px; border-radius:50%; filter:blur(70px); opacity:.2; pointer-events:none; }
+.thanks-glow-one{ top:-100px; left:-80px; background:#2e8fd9; }
+.thanks-glow-two{ right:-100px; bottom:-130px; background:#e8b84b; }
+.anniversary-reflection{ background:linear-gradient(135deg,#070E24,#0B1A3A); }
+.reflection-layout{ display:grid; grid-template-columns:90px minmax(0,1fr); gap:28px; align-items:start; }
+.reflection-icon{ display:grid; place-items:center; width:76px; height:76px; border:1px solid rgba(244,206,122,.5); border-radius:24px; color:var(--gold-300); font-size:2.4rem; background:rgba(232,184,75,.08); }
+.reflection-layout .eyebrow{ color:var(--gold-300); }
+.reflection-layout h2{ color:#fff; font-size:clamp(1.9rem,4vw,3.1rem); }
+.reflection-layout p{ max-width:850px; color:rgba(255,255,255,.8); }
+.reflection-layout blockquote{ margin:22px 0 0; padding-left:18px; border-left:3px solid var(--gold-400); color:var(--gold-300); font:italic 1.2rem/1.5 var(--font-display); }
+.reflection-layout cite{ display:block; margin-top:8px; font:800 .8rem var(--font-label); color:rgba(255,255,255,.7); }
+@media (max-width:800px){
+  .thanks-layout{ grid-template-columns:1fr; }
+  .thanks-scripture{ max-width:600px; }
+  .reflection-layout{ grid-template-columns:1fr; gap:18px; }
+}
+@media (max-width:520px){
+  .thanks-actions .btn{ width:100%; }
+  .thanks-scripture{ border-radius:18px; }
+}
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
+}

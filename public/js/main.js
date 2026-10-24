@@ -40,21 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
     revealEls.forEach(el => io.observe(el));
   } else revealEls.forEach(el => el.classList.add('in'));
 
-  // The anniversary has passed; avoid showing a misleading active countdown.
-  const countdownTarget = new Date('2026-08-30T09:00:00+01:00').getTime();
-  const cdDays = document.getElementById('cd-days');
-  const cdHours = document.getElementById('cd-hours');
-  const cdMinutes = document.getElementById('cd-minutes');
-  const cdSeconds = document.getElementById('cd-seconds');
-  if (cdDays) {
-    function tick() {
-      const diff = Math.max(0, countdownTarget - Date.now());
-      cdDays.textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
-      cdHours.textContent = String(Math.floor(diff / 3600000) % 24).padStart(2, '0');
-      cdMinutes.textContent = String(Math.floor(diff / 60000) % 60).padStart(2, '0');
-      cdSeconds.textContent = String(Math.floor(diff / 1000) % 60).padStart(2, '0');
-    }
-    tick(); setInterval(tick, 1000);
+  // Lenis progressive enhancement: native scrolling remains available if the CDN is unavailable.
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (window.Lenis && !prefersReducedMotion) {
+    const lenis = new window.Lenis({ autoRaf: true, anchors: true, smoothWheel: true });
+    window.graceFireLenis = lenis;
   }
 
   async function submitToSupabase(form, options) {
