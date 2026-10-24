@@ -1,12 +1,6 @@
 # Grace Fire Deliverance Healing Global World Ministry — Website
 
-A complete church website: hero image slider, countdown to the 9th
-Anniversary, weekly service times, about page, events page, gallery,
-sermons, testimonies, prayer request form, contact form, Google map,
-WhatsApp chat button, and a partnership/giving page with bank details.
-Built with plain HTML/CSS/JS on the front end and a small Node.js
-(Express) backend that saves your Prayer Request and Contact form
-submissions — no cost, no database needed.
+A complete church website: hero image slider, anniversary section, weekly service times, about page, events page, gallery, sermons, testimonies, prayer request form, contact form, Google map, WhatsApp chat button, and a partnership/giving page with bank details. Built with plain HTML/CSS/JS and a small Node.js (Express) server. Prayer requests and contact messages are stored in Supabase using public-client credentials protected by Row Level Security (RLS).
 
 This guide assumes you have never deployed a website before. Follow it
 in order.
@@ -17,7 +11,7 @@ in order.
 
 ```
 church-site/
-├── server.js              ← the backend (saves form submissions)
+├── server.js              ← static website server and health endpoint
 ├── package.json            ← tells Node which packages to install
 ├── data/
 │   ├── prayers.json        ← prayer requests get saved here
@@ -87,18 +81,14 @@ leading `0`. This is the format WhatsApp links need
 
 ---
 
-## 4. Reading your Prayer Requests and Contact messages
+## 4. Prayer requests and contact messages (Supabase)
 
-While the server is running, open these links in your browser:
-- `http://localhost:3000/admin/prayers` — every prayer request
-- `http://localhost:3000/admin/contacts` — every contact message
+The contact and prayer forms submit to the Supabase project configured in `public/js/supabase-config.js`. That file contains only the public publishable key; never put a Supabase service-role key in browser code.
 
-**Important:** these admin pages are not password-protected in this
-starter version. Once your site is live, do not share these links
-publicly. If you want them properly secured (with a login), let me
-know and I can add that next.
+The database uses Row Level Security (RLS). Anonymous visitors may submit new prayer requests and contact messages, but public visitors cannot read, update, or delete submissions. View submissions from the Supabase dashboard after signing in with the authorized project account:
+https://supabase.com/dashboard/project/xcvywoecvgzceyvqhjsr
 
----
+The old `/admin/prayers` and `/admin/contacts` public endpoints are disabled. Do not expose prayer requests or contact messages through unauthenticated routes.
 
 ## 5. Deploy it online for free (so anyone can visit it)
 
@@ -137,12 +127,7 @@ on the next visit. This is fine for a small church site and costs
 nothing. If you later want it always instantly awake, Render's paid
 tier removes the sleep.
 
-**Note on saved data:** on Render's free tier, files written to disk
-(like `data/prayers.json`) can be cleared when the service restarts.
-For a first website this is fine to get started; if this ministry
-grows and you want Prayer Requests permanently saved, tell me and I can
-upgrade the backend to a small free database (e.g. Render's free
-PostgreSQL, or Google Sheets) so nothing is ever lost.
+**Note on saved data:** prayer requests and contact messages are stored in Supabase, not on Render's temporary filesystem. Keep database RLS enabled and never add a service-role key to frontend files.
 
 ### Step C — (Optional) Use your own domain name, e.g. www.gracefiredeliverance.org
 1. Buy a domain from a registrar (e.g. Namecheap, ~$10–15/year — this
