@@ -81,7 +81,12 @@
       <p>Share your prayer need below. Our prayer team receives every request and stands with you in faith. You may also reach us directly on WhatsApp for an urgent need.</p>
     </div>
     <div class="reveal">
-      <div class="form-card">
+      <div class="form-card prayer-form-card">
+        <div class="prayer-form-heading">
+          <span class="eyebrow">We Are Here for You</span>
+          <h3>Submit a Prayer Request</h3>
+          <p>Complete the form, then choose WhatsApp or email to send your request directly to our ministry team.</p>
+        </div>
         <form id="prayer-form">
           <div class="field">
             <label for="p-name">Full Name</label>
@@ -100,7 +105,8 @@
             <textarea id="p-request" name="request" required></textarea>
           </div>
           <button type="submit" class="btn btn-flame btn-block">Send Prayer Request</button>
-          <div id="prayer-msg" class="form-msg"></div>
+          <div id="prayer-msg" class="form-msg" aria-live="polite"></div>
+          <div id="prayer-delivery-actions" class="prayer-delivery-actions" hidden></div>
         </form>
       </div>
     </div>

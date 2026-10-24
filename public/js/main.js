@@ -113,6 +113,35 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
       setMessage(options.successMessage, true);
+      if (options.table === 'prayer_requests') {
+        const actions = document.getElementById('prayer-delivery-actions');
+        if (actions) {
+          const deliveryText = [
+            'PRAYER REQUEST — GRACE FIRE DELIVERANCE HEALING GLOBAL WORLD MINISTRY',
+            'Name: ' + name,
+            'Phone: ' + (phone || 'Not provided'),
+            'Email: ' + (email || 'Not provided'),
+            '',
+            'Prayer request:',
+            bodyText
+          ].join('\\n');
+          const whatsappUrl = 'https://wa.me/2348054302247?text=' + encodeURIComponent(deliveryText);
+          const emailUrl = 'mailto:victoryude482@gmail.com?subject=' + encodeURIComponent('Prayer Request - ' + name) + '&body=' + encodeURIComponent(deliveryText);
+          actions.replaceChildren();
+          const whatsappLink = document.createElement('a');
+          whatsappLink.className = 'btn btn-whatsapp';
+          whatsappLink.href = whatsappUrl;
+          whatsappLink.target = '_blank';
+          whatsappLink.rel = 'noopener';
+          whatsappLink.textContent = 'Send to WhatsApp';
+          const emailLink = document.createElement('a');
+          emailLink.className = 'btn btn-email';
+          emailLink.href = emailUrl;
+          emailLink.textContent = 'Send by Email';
+          actions.append(whatsappLink, emailLink);
+          actions.hidden = false;
+        }
+      }
       form.reset();
     } catch (error) {
       console.error('Supabase connection error:', error);
