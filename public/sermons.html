@@ -70,7 +70,46 @@
 
 <section class="section bg-cream">
   <div class="container">
-    <p class="reveal" style="max-width:700px; color:#555;">Replace the YouTube links below with your own recordings. To add a new sermon: copy one <code>sermon-card</code> block, change the title, date, tag and video link.</p>
+    <section id="daily-sermon" aria-labelledby="daily-sermon-title" style="background:#101b32;color:#fff;border-radius:18px;padding:clamp(22px,4vw,38px);margin-bottom:32px;">
+      <span style="display:inline-block;color:#ffb35c;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;">Daily Word • Updated every morning</span>
+      <h2 id="daily-sermon-title" style="color:#fff;margin:12px 0;">Today's Daily Sermon</h2>
+      <p id="daily-sermon-date" style="color:#d9e0ec;margin:0 0 8px;">Faith • Power • The Word of God</p>
+      <h3 id="daily-sermon-heading" style="color:#ffcf91;font-size:clamp(1.35rem,3vw,2rem);">A fresh word for your walk with God</h3>
+      <p id="daily-sermon-scripture" style="font-weight:800;color:#fff;">Loading today's Scripture references…</p>
+      <p id="daily-sermon-opening" style="color:#eef2f8;line-height:1.8;"></p>
+      <h4 style="color:#ffcf91;margin-bottom:8px;">Sermon points</h4>
+      <ol id="daily-sermon-points" style="color:#eef2f8;line-height:1.8;padding-left:22px;"></ol>
+      <p id="daily-sermon-reflection" style="color:#eef2f8;line-height:1.8;"></p>
+      <h4 style="color:#ffcf91;margin-bottom:8px;">Closing prayer</h4>
+      <p id="daily-sermon-prayer" style="color:#eef2f8;line-height:1.8;"></p>
+      <p style="font-size:.85rem;color:#c2cada;margin-top:20px;">Grace Fire Deliverance Healing Global Word Ministry</p>
+    </section>
+    <script>
+      (async function loadDailySermon() {
+        try {
+          const response = await fetch('/sermons/daily-sermon.json?v=' + new Date().toISOString().slice(0, 10), { cache: 'no-store' });
+          if (!response.ok) throw new Error('Daily sermon is not available yet.');
+          const sermon = await response.json();
+          const put = (id, value) => { document.getElementById(id).textContent = value || ''; };
+          put('daily-sermon-date', (sermon.theme || 'Daily Teaching') + ' • ' + (sermon.date || ''));
+          put('daily-sermon-heading', sermon.title);
+          put('daily-sermon-scripture', 'Read: ' + (sermon.scripture || ''));
+          put('daily-sermon-opening', sermon.opening);
+          put('daily-sermon-reflection', 'Reflection: ' + (sermon.reflection || ''));
+          put('daily-sermon-prayer', sermon.prayer);
+          const list = document.getElementById('daily-sermon-points');
+          list.replaceChildren();
+          (sermon.points || []).forEach(point => {
+            const item = document.createElement('li');
+            item.textContent = point;
+            list.appendChild(item);
+          });
+        } catch (error) {
+          document.getElementById('daily-sermon-opening').textContent = 'Today's sermon is being prepared. Please check back soon.';
+        }
+      })();
+    </script>
+    <p class="reveal" style="max-width:700px; color:#555;">Explore the daily Bible teaching above, then browse the sermon recordings below.</p>
     <div class="grid grid-3" style="margin-top:30px;">
 
       <div class="sermon-card reveal">
