@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Ministry Admin | Grace Fire Ministry</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body{background:#f4f6fa;color:#172033} .admin-wrap{max-width:1000px;margin:36px auto;padding:0 18px}
+    .admin-panel{background:#fff;border-radius:16px;padding:24px;margin:18px 0;box-shadow:0 8px 28px #101b3210}
+    .admin-panel h1,.admin-panel h2{margin-top:0}.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .admin-panel input,.admin-panel textarea,.admin-panel select{display:block;width:100%;padding:12px;margin:6px 0 14px;border:1px solid #cbd2df;border-radius:8px;font:inherit;box-sizing:border-box}
+    .admin-panel label{font-weight:700}.admin-btn{background:#101b32;color:#fff;border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;margin:4px 6px 4px 0}
+    .admin-btn.secondary{background:#e9edf4;color:#172033}.notice{padding:12px;background:#eef2f8;border-radius:8px;white-space:pre-wrap}.record{border:1px solid #e0e5ed;border-radius:10px;padding:14px;margin:10px 0}
+    .record h3{margin:0 0 8px}.muted{color:#596579;font-size:.92rem}
+  </style>
+</head>
+<body>
+<main class="admin-wrap">
+  <p><a href="/">← View public website</a></p>
+  <section class="admin-panel">
+    <p class="eyebrow">Private workspace</p><h1>Grace Fire Ministry Admin</h1>
+    <p class="muted">Manage sermon messages and church events. Only an authorized Supabase admin account can save or publish content.</p>
+    <div id="status" class="notice" role="status">Checking configuration…</div>
+  </section>
+  <section id="login-panel" class="admin-panel" hidden>
+    <h2>Admin sign in</h2>
+    <form id="login-form">
+      <label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+      <button class="admin-btn" type="submit">Sign in</button>
+    </form>
+  </section>
+  <div id="workspace" hidden>
+    <section class="admin-panel">
+      <h2>Daily sermon / Bible teaching</h2>
+      <form id="sermon-form">
+        <input id="sermon-id" type="hidden">
+        <div class="admin-grid">
+          <div><label for="sermon-title">Title</label><input id="sermon-title" required maxlength="180"></div>
+          <div><label for="sermon-slug">URL slug (example: faith-in-god)</label><input id="sermon-slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*"></div>
+          <div><label for="sermon-scripture">Bible reference</label><input id="sermon-scripture" placeholder="Hebrews 11:1"></div>
+          <div><label for="sermon-theme">Theme</label><input id="sermon-theme" placeholder="Faith • Power • The Word"></div>
+        </div>
+        <label for="sermon-opening">Opening message</label><textarea id="sermon-opening" rows="3"></textarea>
+        <label for="sermon-points">Sermon points (one per line)</label><textarea id="sermon-points" rows="4"></textarea>
+        <label for="sermon-reflection">Reflection</label><textarea id="sermon-reflection" rows="3"></textarea>
+        <label for="sermon-prayer">Closing prayer</label><textarea id="sermon-prayer" rows="3"></textarea>
+        <div class="admin-grid">
+          <div><label for="sermon-publish-at">Schedule publish time (optional)</label><input id="sermon-publish-at" type="datetime-local"></div>
+          <div><label><input id="sermon-published" type="checkbox" style="display:inline;width:auto;margin-right:8px">Published (visible when scheduled time arrives)</label></div>
+        </div>
+        <button class="admin-btn" type="submit">Save sermon</button><button class="admin-btn secondary" type="button" id="sermon-reset">Clear form</button>
+      </form>
+      <div id="sermon-list"></div>
+    </section>
+    <section class="admin-panel">
+      <h2>Church events</h2>
+      <form id="event-form">
+        <input id="event-id" type="hidden">
+        <div class="admin-grid">
+          <div><label for="event-title">Event title</label><input id="event-title" required maxlength="180"></div>
+          <div><label for="event-slug">URL slug</label><input id="event-slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*"></div>
+          <div><label for="event-start">Starts at</label><input id="event-start" type="datetime-local" required></div>
+          <div><label for="event-end">Ends at (optional)</label><input id="event-end" type="datetime-local"></div>
+          <div><label for="event-location">Location</label><input id="event-location" value="Grace Fire Ministry, Isheri Osun, Lagos"></div>
+        </div>
+        <label for="event-description">Description</label><textarea id="event-description" rows="3"></textarea>
+        <label><input id="event-published" type="checkbox" style="display:inline;width:auto;margin-right:8px">Published</label>
+        <button class="admin-btn" type="submit">Save event</button><button class="admin-btn secondary" type="button" id="event-reset">Clear form</button>
+      </form>
+      <div id="event-list"></div>
+    </section>
+    <section class="admin-panel"><button class="admin-btn secondary" id="signout">Sign out</button></section>
+  </div>
+</main>
+<script src="/js/admin-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
