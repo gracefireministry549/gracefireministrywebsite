@@ -115,3 +115,51 @@ grant select, insert, update, delete on public.church_events to authenticated;
 -- 3. Set that user's app_metadata to {"role":"admin"} using a trusted admin-side method.
 --    Never let a public signup form set app_metadata or use user_metadata for admin authorization.
 -- 4. Refresh the admin user's session after changing app_metadata so the JWT contains the role.
+
+
+-- Testimonies: submissions stay unpublished until an admin approves them.
+-- No email/contact fields are stored in this public-facing table.
+create table if not exists public.testimonies (
+  id uuid primary key default gen_random_uuid(),
+  display_name text not null check (char_length(display_name) between 2 and 100),
+  testimony text not null check (char_length(testimony) between 10 and 3000),
+  consent_to_publish boolean not null default false check (consent_to_publish = true),
+  published boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists testimonies_set_updated_at on public.testimonies;
+create trigger testimonies_set_updated_at before update on public.testimonies
+for each row execute function public.set_updated_at();
+
+alter table public.testimonies enable row level security;
+
+drop policy if exists "Public can read approved testimonies" on public.testimonies;
+create policy "Public can read approved testimonies" on public.testimonies
+for select to anon, authenticated
+using (published = true);
+
+drop policy if exists "Visitors can submit pending testimonies" on public.testimonies;
+create policy "Visitors can submit pending testimonies" on public.testimonies
+for insert to anon, authenticated
+with check (published = false and consent_to_publish = true);
+
+drop policy if exists "Admins can read all testimonies" on public.testimonies;
+create policy "Admins can read all testimonies" on public.testimonies
+for select to authenticated
+using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+drop policy if exists "Admins can update testimonies" on public.testimonies;
+create policy "Admins can update testimonies" on public.testimonies
+for update to authenticated
+using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+with check ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+drop policy if exists "Admins can delete testimonies" on public.testimonies;
+create policy "Admins can delete testimonies" on public.testimonies
+for delete to authenticated
+using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+grant select, insert on public.testimonies to anon, authenticated;
+grant update, delete on public.testimonies to authenticated;
