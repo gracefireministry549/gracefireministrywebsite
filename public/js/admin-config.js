@@ -1,6 +1,6 @@
-// Supabase project URL and publishable/anon key are public client configuration.
-// Never put a service_role key or secret key in this file.
+// Public Supabase client configuration only. Never put service_role or secret keys here.
 window.GRACE_FIRE_SUPABASE = {
-  url: "https://YOUR_PROJECT_REF.supabase.co",
-  anonKey: "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY"
+  url: "https://xcvywoecvgzceyvqhjsr.supabase.co",
+  anonKey: "sb_publishable_ZaFTRyQ2DBfCo0TgRD8oKA_qTLLASby",
+  publishableKey: "sb_publishable_ZaFTRyQ2DBfCo0TgRD8oKA_qTLLASby"
 };
