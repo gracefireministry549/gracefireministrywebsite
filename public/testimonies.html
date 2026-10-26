@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Share a Testimony | Grace Fire Ministry</title>
+<meta name="description" content="Share what God has done in your life with Grace Fire Ministry. Every testimony is reviewed before publication.">
+<link rel="canonical" href="https://gracefireministry.onrender.com/testimonies.html">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#101b32">
+<link rel="icon" href="/images/church-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.testimony-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:28px;align-items:start}
+.testimony-form{background:#fff;border-radius:16px;padding:24px;box-shadow:var(--shadow-card)}
+.testimony-form input,.testimony-form textarea{display:block;width:100%;padding:12px;margin:6px 0 16px;border:1px solid #d5dbe5;border-radius:8px;font:inherit}
+.testimony-list{display:grid;gap:16px}.testimony-card{background:#fff;border-radius:14px;padding:22px;box-shadow:var(--shadow-card);border-left:4px solid var(--gold-400)}
+.testimony-card blockquote{margin:0 0 12px;font-size:1.02rem;white-space:pre-wrap;overflow-wrap:anywhere}.testimony-card cite{font-style:normal;font-weight:800;color:var(--navy-900)}
+.testimony-status{padding:12px;border-radius:8px;background:#f3f5f9;margin-top:12px}.consent-row{display:flex;gap:10px;align-items:flex-start;margin:12px 0 18px}.consent-row input{width:auto;margin-top:6px}
+@media(max-width:760px){.testimony-layout{grid-template-columns:1fr}.testimony-form{padding:18px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container">
+<a class="brand" href="/"><img src="/images/church-logo.png" alt="Church logo"><div class="brand-text"><small>Healing Global World Ministry</small><span>Grace Fire Deliverance</span></div></a>
+<nav class="nav-links"><a href="/">Home</a><a href="/about.html">About</a><a href="/events.html">Events</a><a href="/sermons.html">Sermons</a><a href="/testimonies.html" class="active">Testimonies</a><a href="/contact.html">Contact</a></nav>
+<div class="nav-cta"><a href="/contact.html#prayer" class="btn btn-flame">Prayer Request</a></div><button class="nav-toggle" aria-label="Open menu">&#9776;</button>
+</div></header>
+<section class="page-hero"><div class="container"><span class="eyebrow">Stories of God's Faithfulness</span><h1>Share Your Testimony</h1><p class="lead">We give thanks for what God has done. Submissions are reviewed by our ministry team before they appear publicly.</p></div></section>
+<section class="section bg-cream"><div class="container testimony-layout">
+<div class="testimony-form"><span class="eyebrow">Your Story Matters</span><h2>Submit a Testimony</h2><p>Please do not include private details about another person without their permission. You can ask the ministry to pray for you through our <a href="/contact.html#prayer"><u>prayer request form</u></a>.</p>
+<form id="testimony-form">
+<label for="display-name">Name to display</label><input id="display-name" name="display_name" maxlength="80" minlength="2" required placeholder="e.g. Sister Grace or Anonymous">
+<label for="testimony-text">Your testimony</label><textarea id="testimony-text" name="testimony" rows="7" minlength="20" maxlength="3000" required placeholder="Share what you would like others to know..."></textarea>
+<label class="consent-row"><input id="testimony-consent" type="checkbox" required><span>I give Grace Fire Ministry permission to publish this testimony on its website after review. I understand it will be public if approved.</span></label>
+<button type="submit" class="btn btn-flame btn-block">Submit for Review</button><div id="testimony-status" class="testimony-status" role="status" aria-live="polite">Your testimony will remain unpublished until an admin approves it.</div>
+</form></div>
+<div><div class="section-head"><span class="eyebrow">Approved Stories</span><h2>What God Has Done</h2><p>Only testimonies approved for publication are displayed here.</p></div><div id="testimony-list" class="testimony-list" aria-live="polite"><p>Loading approved testimonies…</p></div></div>
+</div></section>
+<footer class="site-footer"><div class="container"><div class="footer-bottom">&copy; <span id="year"></span> Grace Fire Deliverance Healing Global World Ministry. All rights reserved. · <a href="/">Home</a></div></div></footer>
+<a class="wa-float" href="https://wa.me/2348054302247" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">&#128172;</a>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script src="/js/supabase-config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script><script src="/js/testimonies.js"></script><script src="/js/main.js"></script>
+</body></html>
