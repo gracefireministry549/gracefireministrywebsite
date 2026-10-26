@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function submitToSupabase(form, options) {
     const msg = document.getElementById(options.messageId);
     const btn = form.querySelector('button[type="submit"]');
-    const cfg = window.GRACE_FIRE_SUPABASE;
+    const cfg = window.GRACE_FIRE_SUPABASE || { url: 'https://xcvywoecvgzceyvqhjsr.supabase.co', publishableKey: 'sb_publishable_ZaFTRyQ2DBfCo0TgRD8oKA_qTLLASby' };
     const values = Object.fromEntries(new FormData(form).entries());
     const setMessage = (text, ok) => {
       if (!msg) return;
@@ -112,6 +112,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return;
       }
+      if (options.table === 'prayer_requests') {
+        try {
+          const notifyResponse = await fetch('/api/notify-prayer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, request: bodyText })
+          });
+          if (!notifyResponse.ok) console.warn('Prayer request saved; email notification was not confirmed.');
+        } catch (_) {
+          console.warn('Prayer request saved; email notification could not be reached.');
+        }
+      }
       setMessage(options.successMessage, true);
       if (options.table === 'prayer_requests') {
         const actions = document.getElementById('prayer-delivery-actions');
@@ -126,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
             bodyText
           ].join('\\n');
           const whatsappUrl = 'https://wa.me/2348054302247?text=' + encodeURIComponent(deliveryText);
-          const emailUrl = 'mailto:victoryude482@gmail.com?subject=' + encodeURIComponent('Prayer Request - ' + name) + '&body=' + encodeURIComponent(deliveryText);
+          const emailUrl = 'mailto:gracefireministry1@gmail.com?subject=' + encodeURIComponent('Prayer Request - ' + name) + '&body=' + encodeURIComponent(deliveryText);
           actions.replaceChildren();
           const whatsappLink = document.createElement('a');
           whatsappLink.className = 'btn btn-whatsapp';
