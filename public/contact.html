@@ -143,6 +143,34 @@
   </div>
 </section>
 
+<!-- TESTIMONY SUBMISSION -->
+<section class="section bg-white" id="testimony">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Share What God Has Done</span>
+      <h2>Share Your Testimony</h2>
+      <p>Your testimony will be reviewed by the ministry before anything is published. Please do not include private details about other people.</p>
+    </div>
+    <div class="form-card" style="max-width:640px;margin:0 auto">
+      <form id="testimony-form">
+        <div class="field">
+          <label for="testimony-name">Name to display</label>
+          <input id="testimony-name" name="display_name" type="text" maxlength="100" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="testimony-text">Your testimony</label>
+          <textarea id="testimony-text" name="testimony" minlength="10" maxlength="3000" required></textarea>
+        </div>
+        <div class="field">
+          <label><input name="consent" type="checkbox" required> I give the ministry permission to review this testimony and publish it on the website if approved.</label>
+        </div>
+        <button type="submit" class="btn btn-flame btn-block">Submit Testimony for Review</button>
+        <div id="testimony-msg" class="form-msg" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- GENERAL CONTACT FORM -->
 <section class="section bg-cream">
   <div class="container">
@@ -213,5 +241,6 @@
 <script src="/js/supabase-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/testimonies.js"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
     return;
   }
   const client = window.supabase.createClient(cfg.url, cfg.anonKey);
-  let sermons = [], events = [];
+  let sermons = [], events = [], testimonies = [];
   const safe = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[ch]));
@@ -36,18 +36,22 @@
     return true;
   }
   async function loadAll() {
-    const [s, e] = await Promise.all([
+    const [s, e, t] = await Promise.all([
       client.from("sermons").select("*").order("created_at", {ascending:false}),
-      client.from("church_events").select("*").order("starts_at", {ascending:true})
+      client.from("church_events").select("*").order("starts_at", {ascending:true}),
+      client.from("testimonies").select("*").order("created_at", {ascending:false})
     ]);
-    if (s.error || e.error) { status("Could not load content: " + (s.error || e.error).message); return; }
-    sermons = s.data || []; events = e.data || [];
+    if (s.error || e.error || t.error) { status("Could not load content: " + (s.error || e.error || t.error).message); return; }
+    sermons = s.data || []; events = e.data || []; testimonies = t.data || [];
     $("sermon-list").innerHTML = "<h3>Saved sermons</h3>" + (sermons.map(x =>
       '<article class="record"><h3>'+safe(x.title)+'</h3><p class="muted">'+safe(x.scripture)+' · '+(x.published?'Published':'Draft')+(x.publish_at?' · Scheduled: '+safe(new Date(x.publish_at).toLocaleString()):'')+'</p><button class="admin-btn secondary" data-sermon-edit="'+x.id+'">Edit</button><button class="admin-btn secondary" data-sermon-delete="'+x.id+'">Delete</button></article>'
     ).join("") || "<p>No sermons yet.</p>");
     $("event-list").innerHTML = "<h3>Saved events</h3>" + (events.map(x =>
       '<article class="record"><h3>'+safe(x.title)+'</h3><p class="muted">'+safe(new Date(x.starts_at).toLocaleString())+' · '+(x.published?'Published':'Draft')+'</p><button class="admin-btn secondary" data-event-edit="'+x.id+'">Edit</button><button class="admin-btn secondary" data-event-delete="'+x.id+'">Delete</button></article>'
     ).join("") || "<p>No events yet.</p>");
+    $("testimony-list").innerHTML = "<h3>Submissions ("+testimonies.length+")</h3>" + (testimonies.map(x =>
+      '<article class="record"><h3>'+safe(x.display_name)+'</h3><p class="muted">'+safe(new Date(x.created_at).toLocaleString())+' · '+(x.published?'Published':'Pending review')+'</p><p style="white-space:pre-wrap">'+safe(x.testimony)+'</p><button class="admin-btn secondary" data-testimony-toggle="'+x.id+'">'+(x.published?'Unpublish':'Approve & publish')+'</button><button class="admin-btn secondary" data-testimony-delete="'+x.id+'">Delete</button></article>'
+    ).join("") || "<p>No testimony submissions yet.</p>");
     status("Content loaded. Changes save to Supabase.");
   }
   $("login-form").addEventListener("submit", async (ev) => {
@@ -102,6 +106,16 @@
       $("event-description").value=x.description||""; $("event-location").value=x.location||"";
       $("event-start").value=toLocal(x.starts_at); $("event-end").value=toLocal(x.ends_at);
       $("event-published").checked=x.published; $("event-form").scrollIntoView({behavior:"smooth"});
+    }
+    const testimonyToggle=t.dataset.testimonyToggle, testimonyDelete=t.dataset.testimonyDelete;
+    if (testimonyToggle) {
+      const item=testimonies.find(x=>x.id===testimonyToggle); if(!item)return;
+      const {error}=await client.from("testimonies").update({published:!item.published}).eq("id",testimonyToggle);
+      if(error)status("Could not update testimony: "+error.message);else await loadAll();
+    }
+    if (testimonyDelete && confirm("Permanently delete this testimony submission?")) {
+      const {error}=await client.from("testimonies").delete().eq("id",testimonyDelete);
+      if(error)status("Could not delete testimony: "+error.message);else await loadAll();
     }
     const delS=t.dataset.sermonDelete, delE=t.dataset.eventDelete;
     if (delS && confirm("Delete this sermon?")) {
