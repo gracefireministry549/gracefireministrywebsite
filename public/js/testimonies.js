@@ -1,8 +1,9 @@
 // Public testimony submission and approved testimony display.
 (function () {
   const cfg = window.GRACE_FIRE_SUPABASE || {};
-  const endpoint = cfg.url && cfg.publishableKey ? cfg.url.replace(/\/$/, '') + '/rest/v1/testimonies' : '';
-  const headers = {'apikey': cfg.publishableKey || '', 'Authorization': 'Bearer ' + (cfg.publishableKey || '')};
+  const publicKey = cfg.anonKey || cfg.publishableKey || '';
+  const endpoint = cfg.url && publicKey && !cfg.url.includes('YOUR_PROJECT_REF') && !publicKey.includes('YOUR_SUPABASE') ? cfg.url.replace(/\/$/, '') + '/rest/v1/testimonies' : '';
+  const headers = {'apikey': publicKey, 'Authorization': 'Bearer ' + publicKey};
   const grid = document.getElementById('approved-testimonies');
   if (grid) {
     if (!endpoint) grid.textContent = 'Approved testimonies are temporarily unavailable.';
