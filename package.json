@@ -12,6 +12,6 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "nodemailer": "^6.9.16"
+    "googleapis": "^144.0.0"
   }
 }

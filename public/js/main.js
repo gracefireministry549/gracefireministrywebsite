@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    let prayerEmailSent = false;
     try {
       const row = options.table === 'prayer_requests'
         ? { full_name: name, email: email || null, phone: phone || null, prayer_request: bodyText, consent: true }
@@ -119,12 +120,16 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, phone, request: bodyText })
           });
-          if (!notifyResponse.ok) console.warn('Prayer request saved; email notification was not confirmed.');
+          if (notifyResponse.ok) { const result = await notifyResponse.json(); prayerEmailSent = result.emailSent === true; }
+          else console.warn('Prayer request saved; email notification was not confirmed.');
         } catch (_) {
           console.warn('Prayer request saved; email notification could not be reached.');
         }
       }
-      setMessage(options.successMessage, true);
+      const successText = options.table === 'prayer_requests' && !prayerEmailSent
+        ? 'Your prayer request has been saved. Email notification is not available yet; please use WhatsApp or Send by Email below to notify the ministry.'
+        : options.successMessage;
+      setMessage(successText, true);
       if (options.table === 'prayer_requests') {
         const actions = document.getElementById('prayer-delivery-actions');
         if (actions) {
