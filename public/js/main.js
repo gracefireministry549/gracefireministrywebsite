@@ -126,6 +126,14 @@ document.addEventListener('DOMContentLoaded', function () {
           console.warn('Prayer request saved; email notification could not be reached.');
         }
       }
+      if (options.table === 'contact_messages') {
+        fetch('/api/notify-contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, subject, message: bodyText })
+        }).then(r => { if (!r.ok) console.warn('Contact message saved; email notification was not confirmed.'); })
+          .catch(() => console.warn('Contact message saved; email notification could not be reached.'));
+      }
       const successText = options.table === 'prayer_requests' && !prayerEmailSent
         ? 'Your prayer request has been saved. Email notification is not available yet; please use WhatsApp or Send by Email below to notify the ministry.'
         : options.successMessage;

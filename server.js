@@ -1,7 +1,7 @@
 // Grace Fire Deliverance Healing Global World Ministry website server
 const express = require('express');
 const path = require('path');
-const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,56 +11,103 @@ app.use(express.static(path.join(__dirname, 'public'), { etag: true, maxAge: '1h
 app.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
 
 const attempts = new Map();
-app.post('/api/notify-prayer', async (req, res) => {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isRateLimited(req) {
   const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
   const now = Date.now();
   const recent = (attempts.get(ip) || []).filter(ts => now - ts < 10 * 60 * 1000);
-  if (recent.length >= 5) return res.status(429).json({ error: 'Please wait before sending another request.' });
-  recent.push(now); attempts.set(ip, recent);
+  if (recent.length >= 5) return true;
+  recent.push(now);
+  attempts.set(ip, recent);
   if (attempts.size > 2000) for (const [key, times] of attempts) if (!times.some(ts => now - ts < 10 * 60 * 1000)) attempts.delete(key);
+  return false;
+}
 
-  const name = typeof req.body?.name === 'string' ? req.body.name.trim().slice(0, 120) : '';
-  const email = typeof req.body?.email === 'string' ? req.body.email.trim().slice(0, 254) : '';
-  const phone = typeof req.body?.phone === 'string' ? req.body.phone.trim().slice(0, 40) : '';
-  const request = typeof req.body?.request === 'string' ? req.body.request.trim().slice(0, 3000) : '';
-  if (name.length < 2 || request.length < 3 || (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
-    return res.status(400).json({ error: 'Please check the prayer request details.' });
+function clean(value, max) {
+  return typeof value === 'string' ? value.trim().slice(0, max) : '';
+}
+
+let transporter = null;
+function getMailer() {
+  const { GMAIL_USER, GMAIL_APP_PASSWORD, PRAYER_DESTINATION_EMAIL } = process.env;
+  if (!GMAIL_USER || !GMAIL_APP_PASSWORD || !PRAYER_DESTINATION_EMAIL) return null;
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD.replace(/\s+/g, '') }
+    });
   }
+  return { transporter, from: GMAIL_USER, to: PRAYER_DESTINATION_EMAIL };
+}
 
-  const { GMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN, PRAYER_DESTINATION_EMAIL } = process.env;
-  if (!GMAIL_USER || !GMAIL_CLIENT_ID || !GMAIL_CLIENT_SECRET || !GMAIL_REFRESH_TOKEN || !PRAYER_DESTINATION_EMAIL) {
+async function sendNotification(res, label, { subject, replyTo, lines }) {
+  const mailer = getMailer();
+  if (!mailer) {
+    console.error(label + ' email not configured: set GMAIL_USER, GMAIL_APP_PASSWORD and PRAYER_DESTINATION_EMAIL');
     return res.status(503).json({ error: 'Email notifications are not configured yet.' });
   }
   try {
-    const oauth2 = new google.auth.OAuth2(GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET);
-    oauth2.setCredentials({ refresh_token: GMAIL_REFRESH_TOKEN });
-    const gmail = google.gmail({ version: 'v1', auth: oauth2 });
-    const headers = [
-      'From: Grace Fire Ministry Website <' + GMAIL_USER + '>',
-      'To: ' + PRAYER_DESTINATION_EMAIL,
-      ...(email ? ['Reply-To: ' + email] : []),
-      'Subject: ' + 'Website prayer request — ' + name,
-      'MIME-Version: 1.0',
-      'Content-Type: text/plain; charset="UTF-8"',
-      'Content-Transfer-Encoding: 8bit'
-    ];
-    const body = [
-      'PRAYER REQUEST — GRACE FIRE DELIVERANCE HEALING GLOBAL WORLD MINISTRY',
+    await mailer.transporter.sendMail({
+      from: 'Grace Fire Ministry Website <' + mailer.from + '>',
+      to: mailer.to,
+      replyTo: replyTo || undefined,
+      subject: subject.replace(/[\r\n]+/g, ' '),
+      text: lines.join('\n')
+    });
+    return res.status(200).json({ ok: true, emailSent: true });
+  } catch (error) {
+    console.error(label + ' email delivery failed:', error && (error.code || error.responseCode) || '', error && error.message || 'smtp_error');
+    return res.status(502).json({ error: 'Email notification failed.', emailSent: false });
+  }
+}
+
+app.post('/api/notify-prayer', async (req, res) => {
+  if (isRateLimited(req)) return res.status(429).json({ error: 'Please wait before sending another request.' });
+  const name = clean(req.body && req.body.name, 120);
+  const email = clean(req.body && req.body.email, 254);
+  const phone = clean(req.body && req.body.phone, 40);
+  const request = clean(req.body && req.body.request, 3000);
+  if (name.length < 2 || request.length < 3 || (email && !EMAIL_RE.test(email))) {
+    return res.status(400).json({ error: 'Please check the prayer request details.' });
+  }
+  return sendNotification(res, 'Prayer', {
+    subject: 'Website prayer request \u2014 ' + name,
+    replyTo: email,
+    lines: [
+      'PRAYER REQUEST \u2014 GRACE FIRE DELIVERANCE HEALING GLOBAL WORLD MINISTRY',
       'Name: ' + name,
       'Phone: ' + (phone || 'Not provided'),
       'Email: ' + (email || 'Not provided'),
       '',
       'Prayer request:',
       request
-    ].join('\r\n');
-    const raw = Buffer.from(headers.join('\r\n') + '\r\n\r\n' + body, 'utf8')
-      .toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
-    return res.status(200).json({ ok: true, emailSent: true });
-  } catch (error) {
-    console.error('Prayer email delivery failed:', error?.code || error?.response?.status || 'gmail_api_error');
-    return res.status(502).json({ error: 'Email notification failed.', emailSent: false });
+    ]
+  });
+});
+
+app.post('/api/notify-contact', async (req, res) => {
+  if (isRateLimited(req)) return res.status(429).json({ error: 'Please wait before sending another request.' });
+  const name = clean(req.body && req.body.name, 120);
+  const email = clean(req.body && req.body.email, 254);
+  const subject = clean(req.body && req.body.subject, 160) || 'Website contact message';
+  const message = clean(req.body && req.body.message, 3000);
+  if (name.length < 2 || message.length < 3 || !EMAIL_RE.test(email)) {
+    return res.status(400).json({ error: 'Please check the contact message details.' });
   }
+  return sendNotification(res, 'Contact', {
+    subject: 'Website contact \u2014 ' + subject + ' (' + name + ')',
+    replyTo: email,
+    lines: [
+      'CONTACT MESSAGE \u2014 GRACE FIRE DELIVERANCE HEALING GLOBAL WORLD MINISTRY',
+      'Name: ' + name,
+      'Email: ' + email,
+      'Subject: ' + subject,
+      '',
+      'Message:',
+      message
+    ]
+  });
 });
 
 app.use((req, res) => {
