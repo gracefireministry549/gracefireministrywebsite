@@ -370,3 +370,137 @@ p{ margin:0 0 1em; }
   .prayer-form-card{ padding:22px; }
   .prayer-delivery-actions{ grid-template-columns:1fr; }
 }
+
+
+/* =====================================================================
+   RESPONSIVE LAYOUT SYSTEM — phone, tablet, laptop and desktop
+   Additive overrides: preserve existing ministry content and branding.
+===================================================================== */
+:root {
+  --container: 1200px;
+  --page-gutter: clamp(16px, 3.2vw, 36px);
+}
+html { scroll-padding-top: 88px; }
+body { min-width: 320px; overflow-x: clip; }
+.container { width: min(100% - (var(--page-gutter) * 2), var(--container)); padding-left: 0; padding-right: 0; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+img, video, iframe { max-width: 100%; }
+.section { padding-block: clamp(56px, 7vw, 100px); }
+.section.tight { padding-block: clamp(40px, 5vw, 70px); }
+.section-head { max-width: 720px; }
+.section-head h2, .split h2 { font-size: clamp(1.8rem, 3.2vw, 2.8rem); text-wrap: balance; }
+p { overflow-wrap: anywhere; }
+.grid, .services-grid, .footer-grid, .split, .thanks-layout { min-width: 0; }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.services-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.site-header .container { gap: clamp(12px, 2vw, 28px); }
+.brand { min-width: 0; flex-shrink: 0; }
+.brand-text span { display: block; }
+.nav-links { gap: clamp(12px, 1.8vw, 24px); }
+.nav-links a { white-space: nowrap; }
+.nav-cta { flex-shrink: 0; }
+.hero { min-height: min(760px, 100svh); }
+.hero-content { padding-top: 76px; padding-bottom: 64px; }
+.hero-content h1 { text-wrap: balance; }
+.hero-content p.lead { text-wrap: pretty; }
+.form-card { min-width: 0; }
+.form-card input, .form-card select, .form-card textarea { max-width: 100%; }
+.map-frame { display: block; }
+.site-footer .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+.wa-float { right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); }
+
+/* Admin workspace shares the same responsive rules. */
+.admin-wrap { width: min(100% - 32px, 1040px); }
+.admin-wrap, .admin-wrap * { min-width: 0; }
+.admin-panel { overflow-wrap: anywhere; }
+.admin-panel form { max-width: 100%; }
+.admin-panel input, .admin-panel textarea, .admin-panel select { max-width: 100%; }
+.admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-btn { min-height: 44px; }
+.record { overflow-wrap: anywhere; }
+
+@media (max-width: 1100px) {
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: .82rem; }
+  .nav-cta .btn { padding: 12px 16px; font-size: .84rem; }
+  .grid-4 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .site-footer .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 960px) {
+  .site-header { padding: 12px 0; }
+  .site-header.scrolled { padding: 9px 0; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; font-size: 1.55rem; flex-shrink: 0; }
+  .nav-links {
+    top: 0; right: 0; width: min(86vw, 360px); max-width: none; height: 100vh; height: 100dvh;
+    padding: max(88px, env(safe-area-inset-top)) 28px max(28px, env(safe-area-inset-bottom));
+    justify-content: flex-start; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateX(105%); transition: transform .28s ease; right: 0;
+    visibility: hidden; z-index: 1002;
+  }
+  .nav-links.open { right: 0; transform: translateX(0); visibility: visible; }
+  .nav-links a { font-size: 1rem; padding: 8px 0; }
+  .nav-cta { display: none; }
+  .grid-3, .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .thanks-layout { grid-template-columns: minmax(0, 1fr) minmax(260px, .8fr); }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  :root { --page-gutter: 18px; }
+  .brand { gap: 9px; }
+  .brand img { width: 40px; height: 40px; }
+  .brand-text small { font-size: .52rem; letter-spacing: .1em; }
+  .brand-text span { font-size: .88rem; }
+  .hero { height: auto; min-height: 680px; min-height: 88svh; }
+  .hero-content { min-height: inherit; padding: 112px 18px 118px; }
+  .hero-content h1 { font-size: clamp(2rem, 9vw, 3.2rem); }
+  .hero-content p.lead { font-size: 1rem; }
+  .hero-actions { width: 100%; max-width: 420px; gap: 10px; }
+  .hero-actions .btn { flex: 1 1 100%; }
+  .hero-dots { bottom: 28px; }
+  .section-head { margin-bottom: 30px; }
+  .grid-3, .grid-4, .services-grid { grid-template-columns: minmax(0, 1fr); }
+  .split { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .split img { width: 100%; }
+  .service-card, .account-card, .testi-card { padding: 22px; }
+  .form-card { padding: 24px; }
+  .page-hero { padding: 132px 0 58px; }
+  .page-hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+  .event-banner { padding: 26px 22px; }
+  .cd-timer { width: 100%; gap: 8px; }
+  .cd-unit { flex: 1; min-width: 0; }
+  .cd-unit .num { font-size: 1.45rem; }
+  .thanks-layout { grid-template-columns: minmax(0, 1fr); }
+  .reflection-layout { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .site-footer { padding: 44px 0 22px; }
+  .site-footer .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .footer-bottom { line-height: 1.6; }
+  .admin-wrap { width: min(100% - 24px, 620px); margin: 18px auto; padding: 0; }
+  .admin-panel { padding: 20px; margin: 14px 0; border-radius: 14px; }
+  .admin-panel h1 { font-size: clamp(1.65rem, 7vw, 2.2rem); }
+  .admin-grid { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .admin-panel input, .admin-panel textarea, .admin-panel select { font-size: 16px; min-height: 46px; }
+  .admin-panel textarea { min-height: 110px; }
+  .admin-btn { width: 100%; margin: 5px 0; }
+  .record .admin-btn { width: auto; }
+}
+@media (max-width: 390px) {
+  :root { --page-gutter: 14px; }
+  .brand-text small { font-size: .46rem; }
+  .brand-text span { font-size: .78rem; }
+  .nav-toggle { width: 42px; height: 42px; }
+  .form-card { padding: 18px; }
+  .prayer-delivery-actions .btn { font-size: .86rem; }
+}
+@media (min-width: 1440px) {
+  :root { --container: 1280px; }
+  .section { padding-block: 112px; }
+}
+@media (hover: none) {
+  .service-card:hover, .btn:hover { transform: none; }
+  .gallery-item:hover img { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-links { transition: none; }
+}
